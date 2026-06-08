@@ -1,0 +1,84 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Markdown Editor</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;background:#0f0f23;color:#e0e0e0;height:100vh;display:flex;flex-direction:column}
+.ob{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;display:flex;justify-content:center;align-items:center}.ob.hide{display:none}
+.oc{background:#1a1a3e;border-radius:20px;padding:40px;max-width:500px;width:90%;text-align:center}
+.oc h2{color:#74b9ff;font-size:28px;margin-bottom:8px}.oc .sub{color:#888;font-size:14px}
+.stps{margin:25px 0;text-align:left;display:flex;flex-direction:column;gap:18px}
+.st{display:flex;gap:14px;align-items:flex-start}.st .n{width:32px;height:32px;border-radius:50%;background:#74b9ff;color:#000;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.st h4{font-size:14px;margin-bottom:2px}.st p{font-size:12px;color:#888;line-height:1.5}
+.oc button{padding:14px 40px;border:none;border-radius:10px;background:#74b9ff;color:#000;font-size:16px;font-weight:700;cursor:pointer}
+.oc .sk{color:#555;font-size:12px;cursor:pointer;margin-top:12px;display:inline-block}
+.app{display:none;flex:1;flex-direction:column}.app.show{display:flex}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:#1a1a3e;border-bottom:1px solid #2a2a4e}
+.topbar h1{font-size:16px}h1 span{background:linear-gradient(90deg,#74b9ff,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.topbar .actions{display:flex;gap:8px}
+.topbar button{padding:6px 14px;border:1px solid #333;border-radius:6px;background:#0f0f23;color:#fff;cursor:pointer;font-size:12px}
+.topbar button:hover{border-color:#74b9ff}
+.split{display:flex;flex:1;overflow:hidden}
+.editor-pane{flex:1;display:flex;flex-direction:column;border-right:1px solid #2a2a4e}
+.editor-pane .label{padding:8px 15px;font-size:11px;color:#666;background:#141428;border-bottom:1px solid #2a2a4e}
+.editor-pane textarea{flex:1;padding:20px;background:#0f0f23;color:#a29bfe;font-family:'JetBrains Mono',monospace;font-size:14px;border:none;resize:none;line-height:1.7}
+.editor-pane textarea:focus{outline:none}
+.preview-pane{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.preview-pane .label{padding:8px 15px;font-size:11px;color:#666;background:#141428;border-bottom:1px solid #2a2a4e}
+.preview-pane .content{flex:1;padding:20px;overflow-y:auto;background:#1a1a3e;line-height:1.7}
+.preview-pane h1,.preview-pane h2,.preview-pane h3{color:#74b9ff;margin:15px 0 8px}
+.preview-pane h1{font-size:24px;border-bottom:1px solid #2a2a4e;padding-bottom:8px}
+.preview-pane h2{font-size:20px}.preview-pane h3{font-size:16px}
+.preview-pane p{margin-bottom:12px}
+.preview-pane code{background:#0f0f23;padding:2px 6px;border-radius:4px;font-family:monospace;font-size:13px;color:#fd79a8}
+.preview-pane pre{background:#0f0f23;padding:15px;border-radius:8px;overflow-x:auto;margin-bottom:12px}
+.preview-pane pre code{color:#a29bfe;padding:0;background:none}
+.preview-pane blockquote{border-left:3px solid #74b9ff;padding-left:12px;color:#888;margin-bottom:12px}
+.preview-pane strong{color:#fff}
+.preview-pane em{color:#dfe6e9}
+.preview-pane ul,.preview-pane ol{padding-left:20px;margin-bottom:12px}
+.preview-pane li{margin-bottom:4px}
+.preview-pane a{color:#74b9ff}
+.preview-pane hr{border:none;border-top:1px solid #2a2a4e;margin:15px 0}
+.preview-pane img{max-width:100%;border-radius:8px}
+.preview-pane table{border-collapse:collapse;width:100%;margin-bottom:12px}
+.preview-pane th,.preview-pane td{border:1px solid #333;padding:8px;text-align:left}
+.preview-pane th{background:#141428}
+</style></head><body>
+<div class="ob" id="ob"><div class="oc">
+<h2>Markdown Editor</h2><p class="sub">Write markdown, see the preview live</p>
+<div class="stps">
+<div class="st"><div class="n">1</div><div><h4>Write Markdown</h4><p>Type markdown in the left pane. Use # for headers, ** for bold, * for italic, ` for code.</p></div></div>
+<div class="st"><div class="n">2</div><div><h4>See Live Preview</h4><p>The right pane shows the rendered HTML in real-time as you type.</p></div></div>
+<div class="st"><div class="n">3</div><div><h4>Export Your Work</h4><p>Click Copy HTML to get the rendered code, or Download .md to save the markdown file.</p></div></div>
+</div>
+<button onclick="start()">Start Writing</button>
+<div class="sk" onclick="start()">Skip</div>
+</div></div>
+<div class="app" id="app">
+<div class="topbar"><h1><span>Markdown Editor</span></h1><div class="actions"><button onclick="copyHTML()">Copy HTML</button><button onclick="downloadMD()">Download .md</button><button onclick="loadSample()">Load Example</button></div></div>
+<div class="split"><div class="editor-pane"><div class="label">MARKDOWN</div><textarea id="editor" oninput="render()" placeholder="Start writing markdown here..."></textarea></div><div class="preview-pane"><div class="label">PREVIEW</div><div class="content" id="preview"></div></div></div></div>
+<script>
+function start(){document.getElementById('ob').classList.add('hide');document.getElementById('app').classList.add('show');localStorage.setItem('me_seen','1');render()}
+if(localStorage.getItem('me_seen')){document.getElementById('ob').classList.add('hide');document.getElementById('app').classList.add('show')}
+function render(){
+var md=document.getElementById('editor').value;
+md=md.replace(/^### (.+)$/gm,'<h3>$1</h3>').replace(/^## (.+)$/gm,'<h2>$1</h2>').replace(/^# (.+)$/gm,'<h1>$1</h1>');
+md=md.replace(/```([\s\S]*?)```/g,'<pre><code>$1</code></pre>').replace(/`([^`]+)`/g,'<code>$1</code>');
+md=md.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>');
+md=md.replace(/~~(.+?)~~/g,'<del>$1</del>');
+md=md.replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>');
+md=md.replace(/^---$/gm,'<hr>');
+md=md.replace(/^\- (.+)$/gm,'<li>$1</li>');
+md=md.replace(/^\d+\. (.+)$/gm,'<li>$1</li>');
+md=md.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2">$1</a>');
+md=md.replace(/\n\n/g,'</p><p>');
+md='<p>'+md+'</p>';
+md=md.replace(/<p><h/g,'<h').replace(/<\/h(\d)><\/p>/g,'</h$1>');
+md=md.replace(/<p><blockquote>/g,'<blockquote>').replace(/<\/blockquote><\/p>/g,'</blockquote>');
+md=md.replace(/<p><pre>/g,'<pre>').replace(/<\/pre><\/p>/g,'</pre>');
+md=md.replace(/<p><hr><\/p>/g,'<hr>');
+md=md.replace(/<p><li>/g,'<ul><li>').replace(/<\/li><\/p>/g,'</li></ul>');
+document.getElementById('preview').innerHTML=md;
+}
+function copyHTML(){navigator.clipboard.writeText(document.getElementById('preview').innerHTML)}
+function downloadMD(){var a=document.createElement('a');a.download='document.md';a.href=URL.createObjectURL(new Blob([document.getElementById('editor').value]));a.click()}
+function loadSample(){document.getElementById('editor').value='# Hello World\n\nThis is a **live markdown editor** with *real-time preview*.\n\n## Features\n\n- Write markdown on the left\n- See rendered HTML on the right\n- Export to HTML or .md file\n\n## Code Example\n\n```javascript\nfunction hello() {\n  console.log("Hello World!");\n}\n```\n\n> This is a blockquote\n\n### Table\n\n| Name | Age | City |\n|------|-----|------|\n| John | 25 | NYC |\n| Jane | 30 | LA |\n\n---\n\nMade with \u2764\ufe0f';render()}
+render();
+</script></body></html>
